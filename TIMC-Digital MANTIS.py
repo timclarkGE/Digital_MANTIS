@@ -44,7 +44,7 @@ class popupWindow(object):
         self.label_max_velocity = Label(top, text="Max Velocity Percentage, Range: 1 to 100")
         self.acceleration = Entry(top, width=5)
         self.label_acceleration = Label(top, text="Acceleration, Range 0.1 to 100")
-        self.apply = Button(top, text="APPLY", command=self.cleanup)
+        self.apply = Button(top, text="APPLY", command=self.check_data)
         self.current_limit.grid(row=0, column=0)
         self.label_current_limit.grid(row=0, column=1, stick=W)
         self.max_velocity.grid(row=1, column=0)
@@ -53,7 +53,16 @@ class popupWindow(object):
         self.label_acceleration.grid(row=2, column=1, sticky=W)
         self.apply.grid(row=5,column=0)
 
+    def check_data(self):
+        if self.current_limit.get().isdigit():
+            if float(self.current_limit.get())>0:
+                print("Good Job")
+                self.cleanup()
+        else:
+            messagebox.showerror("Idiot", "Current Limit must be a number Stupid")
+
     def cleanup(self):
+
         self.value = self.current_limit.get()
         self.top.destroy()
 
