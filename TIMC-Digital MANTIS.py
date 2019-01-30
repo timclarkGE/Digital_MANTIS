@@ -200,12 +200,12 @@ class ControlFrame:
         camera_frame.grid(row=3,column=0, columnspan=7, sticky=W)
 
 
-        out1 = AxisFrame(frame1, "BASE CIRC", "POSITIVE", "NEGATIVE", 539552, 2, colorArray[0])
-        out2 = AxisFrame(frame2, "BASE AUX", "POSITIVE", "NEGATIVE", 538798, 0, colorArray[1])
+        out1 = AxisFrame(frame1, "BASE CIRC", "CW", "CCW", 539552, 2, colorArray[0])
+        out2 = AxisFrame(frame2, "BASE AUX", "OUT", "IN", 538798, 0, colorArray[1])
         out3 = AxisFrame(frame3, "VARD ROT", "POSITIVE", "NEGATIVE", 539552, 0, colorArray[2])
         out4 = AxisFrame(frame4, "VARD VERT", "POSITIVE", "NEGATIVE", 539552, 1, colorArray[3])
         out5 = AxisFrame(frame5, "DA MAST", "POSITIVE", "NEGATIVE", 539552, 3, colorArray[4])
-        out6 = AxisFrame(frame6, "DA PAN", "POSITIVE", "NEGATIVE", 539552, 5, colorArray[5])
+        out6 = AxisFrame(frame6, "DA PAN", "RIGHT", "LEFT", 539552, 5, colorArray[5])
         out7 = AxisFrame(frame7, "DA TILT", "POSITIVE", "NEGATIVE", 539552, 4, colorArray[6])
 
         #RJ Camera Control Code
