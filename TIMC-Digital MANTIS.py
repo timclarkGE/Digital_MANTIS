@@ -24,6 +24,14 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 #Line required to look for Phidget devices on the network
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
+#System B
+HUB1 = 539079
+HUB2 = 539520
+
+#System C
+#HUB1 = 539081
+#HUB2 = 538800
+
 class SetupMainWindow:
     def __init__(self):
         self.gui_width = 1050
@@ -200,13 +208,13 @@ class ControlFrame:
         camera_frame.grid(row=3,column=0, columnspan=7, sticky=W)
 
 
-        out1 = AxisFrame(frame1, "BASE CIRC", "CW", "CCW", 539081, 5, colorArray[0])
-        out2 = AxisFrame(frame2, "BASE AUX", "OUT", "IN", 538800, 0, colorArray[1])
-        out3 = AxisFrame(frame3, "VARD ROT", "POSITIVE", "NEGATIVE", 539081, 3, colorArray[2])
-        out4 = AxisFrame(frame4, "VARD VERT", "POSITIVE", "NEGATIVE", 539081, 4, colorArray[3])
-        out5 = AxisFrame(frame5, "DA MAST", "POSITIVE", "NEGATIVE", 539081, 0, colorArray[4])
-        out6 = AxisFrame(frame6, "DA PAN", "RIGHT", "LEFT", 539081, 2, colorArray[5])
-        out7 = AxisFrame(frame7, "DA TILT", "POSITIVE", "NEGATIVE", 539081, 1, colorArray[6])
+        out1 = AxisFrame(frame1, "BASE CIRC", "CW", "CCW", HUB1, 5, colorArray[0])
+        out2 = AxisFrame(frame2, "BASE AUX", "OUT", "IN", HUB2, 0, colorArray[1])
+        out3 = AxisFrame(frame3, "VARD ROT", "POSITIVE", "NEGATIVE", HUB1, 3, colorArray[2])
+        out4 = AxisFrame(frame4, "VARD VERT", "POSITIVE", "NEGATIVE", HUB1, 4, colorArray[3])
+        out5 = AxisFrame(frame5, "DA MAST", "POSITIVE", "NEGATIVE", HUB1, 0, colorArray[4])
+        out6 = AxisFrame(frame6, "DA PAN", "RIGHT", "LEFT", HUB1, 2, colorArray[5])
+        out7 = AxisFrame(frame7, "DA TILT", "POSITIVE", "NEGATIVE", HUB1, 1, colorArray[6])
 
         #RJ Camera Control Code
         self.invert_tilt = BooleanVar()
@@ -217,8 +225,8 @@ class ControlFrame:
         self.btn_wide = Button(camera_frame, text="WIDE", font="Courier, 12", width=7)
         self.btn_tele = Button(camera_frame, text="TELE", font="Courier, 12", width=7)
         self.btn_ms = Button(camera_frame, text="MS", font="Courier, 12", width=7)
-        self.left_light_scale = Scale(camera_frame, orient=VERTICAL, from_=0, to=0.22, resolution=0.01, command=self.update_left_intensity)
-        self.right_light_scale = Scale(camera_frame, orient=VERTICAL, from_=0, to=0.22, resolution=0.01, command=self.update_right_intensity)
+        self.left_light_scale = Scale(camera_frame, orient=VERTICAL, from_=0, to=0.45, resolution=0.01, command=self.update_left_intensity)
+        self.right_light_scale = Scale(camera_frame, orient=VERTICAL, from_=0, to=0.45, resolution=0.01, command=self.update_right_intensity)
         self.label_lights = Label(camera_frame, text="  Light Intensity")
         self.btn_tilt_up = Button(camera_frame, text="TILT UP", font="Courier, 12", width=10)
         self.btn_tilt_down = Button(camera_frame, text="TILT DOWN", font="Courier, 12", width=10)
@@ -249,70 +257,70 @@ class ControlFrame:
 
         #Connect to Phidget Devices
         self.power = DigitalOutput()
-        self.power.setDeviceSerialNumber(538800)
+        self.power.setDeviceSerialNumber(HUB2)
         self.power.setIsHubPortDevice(False)
         self.power.setHubPort(1)
         self.power.setChannel(0)
         self.power.openWaitForAttachment(5000)
 
         self.manual_select = DigitalOutput()
-        self.manual_select.setDeviceSerialNumber(538800)
+        self.manual_select.setDeviceSerialNumber(HUB2)
         self.manual_select.setIsHubPortDevice(False)
         self.manual_select.setHubPort(1)
         self.manual_select.setChannel(1)
         self.manual_select.openWaitForAttachment(5000)
 
         self.near = DigitalOutput()
-        self.near.setDeviceSerialNumber(538800)
+        self.near.setDeviceSerialNumber(HUB2)
         self.near.setIsHubPortDevice(False)
         self.near.setHubPort(1)
         self.near.setChannel(2)
         self.near.openWaitForAttachment(5000)
 
         self.far = DigitalOutput()
-        self.far.setDeviceSerialNumber(538800)
+        self.far.setDeviceSerialNumber(HUB2)
         self.far.setIsHubPortDevice(False)
         self.far.setHubPort(1)
         self.far.setChannel(3)
         self.far.openWaitForAttachment(5000)
 
         self.wide = DigitalOutput()
-        self.wide.setDeviceSerialNumber(538800)
+        self.wide.setDeviceSerialNumber(HUB2)
         self.wide.setIsHubPortDevice(False)
         self.wide.setHubPort(1)
         self.wide.setChannel(4)
         self.wide.openWaitForAttachment(5000)
 
         self.tele = DigitalOutput()
-        self.tele.setDeviceSerialNumber(538800)
+        self.tele.setDeviceSerialNumber(HUB2)
         self.tele.setIsHubPortDevice(False)
         self.tele.setHubPort(1)
         self.tele.setChannel(5)
         self.tele.openWaitForAttachment(5000)
 
         self.left_light = VoltageOutput()
-        self.left_light.setDeviceSerialNumber(538800)
+        self.left_light.setDeviceSerialNumber(HUB2)
         self.left_light.setIsHubPortDevice(False)
         self.left_light.setHubPort(2)
         self.left_light.setChannel(0)
         self.left_light.openWaitForAttachment(5000)
 
         self.right_light = VoltageOutput()
-        self.right_light.setDeviceSerialNumber(538800)
+        self.right_light.setDeviceSerialNumber(HUB2)
         self.right_light.setIsHubPortDevice(False)
         self.right_light.setHubPort(3)
         self.right_light.setChannel(0)
         self.right_light.openWaitForAttachment(5000)
 
         self.pan = VoltageOutput()
-        self.pan.setDeviceSerialNumber(538800)
+        self.pan.setDeviceSerialNumber(HUB2)
         self.pan.setIsHubPortDevice(False)
         self.pan.setHubPort(5)
         self.pan.setChannel(0)
         self.pan.openWaitForAttachment(5000)
 
         self.tilt = VoltageOutput()
-        self.tilt.setDeviceSerialNumber(538800)
+        self.tilt.setDeviceSerialNumber(HUB2)
         self.tilt.setIsHubPortDevice(False)
         self.tilt.setHubPort(4)
         self.tilt.setChannel(0)

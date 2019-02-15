@@ -37,11 +37,24 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 MAXPR = 130.5 #Default maximum pressure of the ITV1050-21N2BL4 Pressure regulator
 MINPR = 0.0
 
+#System A
+HUB1 = 538774
+HUB2 = 538780
+SBCH = 512907
+INTER = 527456  #interface kit 8/8/8
+
 #Serial Numbers for Devices
-HUB1 = 539540
-HUB2 = 539115
-SBCH = 512844
-INTER = 527447  #interface kit 8/8/8
+#System B
+#HUB1 = 539685
+#HUB2 = 538463
+#SBCH = 512770
+#INTER = 527455  #interface kit 8/8/8
+
+#System C
+#HUB1 = 539540
+#HUB2 = 539115
+#SBCH = 512844
+#INTER = 527447  #interface kit 8/8/8
 #Solenoids
 CH1_S = [HUB2, 0, 1]
 CH2_S = [HUB2, 0, 2]
@@ -95,7 +108,7 @@ class MainWindow:
         self.parameters = parameters
         self.master = master
         self.master.geometry(str(parameters.gui_width) + "x" + str(parameters.gui_height))
-        self.master.title("Tooling Inspection Motion Controller - Pneumatic 10 CH")
+        self.master.title("R0 - Tooling Inspection Motion Controller - Pneumatic 9 CH")
 
         #Create Frame for Pneumatics Control
         self.out1 = PneumaticControlFrame(self.master, blue_checkers)
@@ -157,12 +170,12 @@ class PneumaticFrame1:
         self.label.grid(column=0, row=5, columnspan=2)
 
         # Connect to Phidget Solid State Relay for solinoid control
-        self.soldnoid_switch = DigitalOutput()
-        self.soldnoid_switch.setDeviceSerialNumber(sol[0])
-        self.soldnoid_switch.setIsHubPortDevice(False)
-        self.soldnoid_switch.setHubPort(sol[1])
-        self.soldnoid_switch.setChannel(sol[2])
-        self.soldnoid_switch.openWaitForAttachment(5000)
+        self.solenoid_switch = DigitalOutput()
+        self.solenoid_switch.setDeviceSerialNumber(sol[0])
+        self.solenoid_switch.setIsHubPortDevice(False)
+        self.solenoid_switch.setHubPort(sol[1])
+        self.solenoid_switch.setChannel(sol[2])
+        self.solenoid_switch.openWaitForAttachment(5000)
 
         #Connect to Phidget Solid State Relay for regulator power control
         self.reg_switch = DigitalOutput()
@@ -237,12 +250,12 @@ class PneumaticFrame1:
     def solenoid_retract(self):
         self.extend.config(bg="SystemButtonFace")
         self.retract.config(bg=self.activeColor)
-        self.soldnoid_switch.setState(True)
+        self.solenoid_switch.setState(True)
 
     def solenoid_extend(self):
         self.retract.config(bg="SystemButtonFace")
         self.extend.config(bg=self.activeColor)
-        self.soldnoid_switch.setState(False)
+        self.solenoid_switch.setState(False)
 
     def get_label_input(self):
         self.window = popupWindow(self.master)
@@ -278,7 +291,7 @@ class PneumaticFrame1:
             self.pressure.set("")
 
 class PneumaticFrame2:
-    def __init__(self, master, initial_name, color, reg_pwr, reg_set, reg_get):
+    def __init__(self, master, initial_name, color, sol, reg_pwr, reg_set, reg_get):
         self.frame = Frame(master, borderwidth=2, relief=SUNKEN, bg=color)
         self.frame.pack()
         self.master = master
@@ -308,6 +321,14 @@ class PneumaticFrame2:
         self.frame.rowconfigure(4, minsize=5)
         self.label.grid(column=0, row=5, columnspan=2)
 
+        # Connect to Phidget Solid State Relay for solinoid control
+        if self.frame_name.get() == "Hydro":
+            self.solenoid_switch = DigitalOutput()
+            self.solenoid_switch.setDeviceSerialNumber(sol[0])
+            self.solenoid_switch.setIsHubPortDevice(False)
+            self.solenoid_switch.setHubPort(sol[1])
+            self.solenoid_switch.setChannel(sol[2])
+            self.solenoid_switch.openWaitForAttachment(5000)
 
         #Connect to Phidget Solid State Relay for regulator power control
         self.reg_switch = DigitalOutput()
@@ -343,7 +364,8 @@ class PneumaticFrame2:
             #Turn on power to regulator and show active button color
             self.power.config(bg=self.activeColor)
             self.reg_switch.setState(True)
-
+            if self.frame_name.get() == "Hydro":
+                self.solenoid_switch.setState(True)
 
             #Start monitoring air pressure
             self.update_pressure()
@@ -362,6 +384,8 @@ class PneumaticFrame2:
             time.sleep(0.5)
             self.frame.update()
             self.reg_switch.setState(False)
+            if self.frame_name.get() == "Hydro":
+                self.solenoid_switch.setState(False)
             time.sleep(0.5)
             self.set_pressure_scale.set(remember_state)
 
@@ -433,9 +457,9 @@ class PneumaticControlFrame:
         out4 = PneumaticFrame1(frame4, "Channel #4", colorArray[3], CH4_S, CH4_RP, CH4_RSP, CH4_ROP)
         out5 = PneumaticFrame1(frame5, "Channel #5", colorArray[4], CH5_S, CH5_RP, CH5_RSP, CH5_ROP)
         out6 = PneumaticFrame1(frame6, "Channel #6", colorArray[5], CH6_S, CH6_RP, CH6_RSP, CH6_ROP)
-        out7 = PneumaticFrame2(frame7, "Purge #1", 'DarkOliveGreen3', PG1_RP, PG1_RSP, PG1_ROP)
-        out8 = PneumaticFrame2(frame8, "Purge #2", 'DarkOliveGreen2', PG2_RP, PG2_RSP, PG2_ROP)
-        out9 = PneumaticFrame2(frame9, "Hydro", 'DarkOrange2', HYD_RP, HYD_RSP, HYD_ROP )
+        out7 = PneumaticFrame2(frame7, "Purge #1", 'DarkOliveGreen3', 0, PG1_RP, PG1_RSP, PG1_ROP)
+        out8 = PneumaticFrame2(frame8, "Purge #2", 'DarkOliveGreen2', 0, PG2_RP, PG2_RSP, PG2_ROP)
+        out9 = PneumaticFrame2(frame9, "Hydro", 'DarkOrange2', HYD_RP, HYD_S, HYD_RSP, HYD_ROP )
 
 
 
