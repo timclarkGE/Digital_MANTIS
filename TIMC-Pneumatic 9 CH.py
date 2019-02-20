@@ -10,6 +10,7 @@
 # multiple pneumatic channels which actuate various parts of the
 # tool.
 
+#TODO warning that flashes the frame when pressure is dropping.
 
 from tkinter import *
 from Phidget22.Devices.DCMotor import *
@@ -38,23 +39,24 @@ MAXPR = 130.5 #Default maximum pressure of the ITV1050-21N2BL4 Pressure regulato
 MINPR = 0.0
 
 #System A
-HUB1 = 538774
-HUB2 = 538780
-SBCH = 512907
-INTER = 527456  #interface kit 8/8/8
+#HUB1 = 538774
+#HUB2 = 538780
+#SBCH = 512907
+#INTER = 527456  #interface kit 8/8/8
 
 #Serial Numbers for Devices
 #System B
-#HUB1 = 539685
-#HUB2 = 538463
-#SBCH = 512770
-#INTER = 527455  #interface kit 8/8/8
+HUB1 = 539685
+HUB2 = 538463
+SBCH = 512770
+INTER = 527455  #interface kit 8/8/8
 
 #System C
 #HUB1 = 539540
 #HUB2 = 539115
 #SBCH = 512844
 #INTER = 527447  #interface kit 8/8/8
+
 #Solenoids
 CH1_S = [HUB2, 0, 1]
 CH2_S = [HUB2, 0, 2]
@@ -108,7 +110,7 @@ class MainWindow:
         self.parameters = parameters
         self.master = master
         self.master.geometry(str(parameters.gui_width) + "x" + str(parameters.gui_height))
-        self.master.title("R0 - Tooling Inspection Motion Controller - Pneumatic 9 CH")
+        self.master.title("R0 - TIMC Digital MANTIS Pneumatic - S/N: 032")
 
         #Create Frame for Pneumatics Control
         self.out1 = PneumaticControlFrame(self.master, blue_checkers)
@@ -135,7 +137,7 @@ class popupWindow(object):
         self.top.destroy()
 
 class PneumaticFrame1:
-    def __init__(self, master, initial_name, color, sol, reg_pwr, reg_set, reg_get):
+    def __init__(self, master, initial_name, top_name, color, sol, reg_pwr, reg_set, reg_get, PSI):
         self.frame = Frame(master, borderwidth=2, relief=SUNKEN, bg=color)
         self.frame.pack()
         self.master = master
@@ -144,6 +146,7 @@ class PneumaticFrame1:
         self.state = 0
         self.fontType = "Comic Sans"
         self.activeColor = 'SpringGreen4'
+        self.frameColor = color
 
         self.pressure = IntVar()
         self.pressure.set("")
@@ -153,9 +156,13 @@ class PneumaticFrame1:
         self.retract = Button(self.frame, text="RETRACT", activebackground=self.activeColor, state=DISABLED, command=lambda: self.solenoid_retract())
         self.set_label = Button(self.frame, text="SET LABEL", font=(self.fontType,7), command=lambda: self.get_label_input())
         self.observed_pressure = Entry(self.frame, width=5, state="readonly", textvariable = self.pressure)
-        self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=130.5, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
+        self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
         self.custom_label = Label(self.frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(self.frame, text=initial_name, bg=color)
+
+        #Init the pressure scale to the default value.
+        self.set_pressure_scale.set(PSI)
+        self.frame_name.set(top_name)
 
         self.frame.rowconfigure(0, minsize=30)
         self.custom_label.grid(row=0, column=0, columnspan=2, sticky=S)
@@ -283,15 +290,32 @@ class PneumaticFrame1:
             try:
                 val = float(self.pressure_reading.getSensorValue())
                 PSI = val * 165.63 - 30.855
-                self.pressure.set(round(PSI, 2))
+                PSI = round(PSI,2)
+                self.pressure.set(PSI)
+                # Low pressure check
+                if PSI < (self.set_pressure_scale.get() - 3):
+                    if self.frame.cget('bg') == "Red":
+                        self.frame.config(bg=self.frameColor)
+                        self.set_pressure_scale.config(bg=self.frameColor)
+                        self.custom_label.config(bg=self.frameColor)
+                    else:
+                        self.frame.config(bg='Red')
+                        self.set_pressure_scale.config(bg="Red")
+                        self.custom_label.config(bg="Red")
+                if PSI > (self.set_pressure_scale.get() - 3):
+                    if self.frame.cget('bg') == "Red":
+                        self.frame.config(bg=self.frameColor)
+                        self.set_pressure_scale.config(bg=self.frameColor)
+                        self.custom_label.config(bg=self.frameColor)
+
             except:
                 print("Init Air Pressure")
-            root.after(100, self.update_pressure)
+            root.after(200, self.update_pressure)
         else:
             self.pressure.set("")
 
 class PneumaticFrame2:
-    def __init__(self, master, initial_name, color, sol, reg_pwr, reg_set, reg_get):
+    def __init__(self, master, initial_name, top_name, color, sol, reg_pwr, reg_set, reg_get, PSI):
         self.frame = Frame(master, borderwidth=2, relief=SUNKEN, bg=color)
         self.frame.pack()
         self.master = master
@@ -300,16 +324,22 @@ class PneumaticFrame2:
         self.state = 0
         self.fontType = "Comic Sans"
         self.activeColor = 'SpringGreen4'
+        self.frameColor = color
 
         self.pressure = IntVar()
-        self.pressure.set("")
+        self.pressure.set(top_name)
 
         self.power = Button(self.frame, text="PWR", activebackground=self.activeColor, command=lambda: self.toggle_pwr())
         self.set_label = Button(self.frame, text="SET LABEL", font=(self.fontType,7), command=lambda: self.get_label_input())
         self.observed_pressure = Entry(self.frame, width=5, state="readonly", textvariable = self.pressure)
-        self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=130.5, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
+        self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
         self.custom_label = Label(self.frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(self.frame, text=initial_name, bg=color)
+
+        self.frame_name.set(top_name)
+
+        # Init the pressure scale to the default value.
+        self.set_pressure_scale.set(PSI)
 
         self.frame.rowconfigure(0, minsize=30)
         self.custom_label.grid(row=0, column=0, columnspan=2, sticky=S)
@@ -422,10 +452,26 @@ class PneumaticFrame2:
             try:
                 val = float(self.pressure_reading.getSensorValue())
                 PSI = val * 165.63 - 30.855
-                self.pressure.set(round(PSI, 2))
+                PSI = round(PSI, 2)
+                self.pressure.set(PSI)
+                #Low pressure check
+                if PSI < (self.set_pressure_scale.get() - 3):
+                    if self.frame.cget('bg') == "Red":
+                        self.frame.config(bg=self.frameColor)
+                        self.set_pressure_scale.config(bg=self.frameColor)
+                        self.custom_label.config(bg=self.frameColor)
+                    else:
+                        self.frame.config(bg = 'Red')
+                        self.set_pressure_scale.config(bg = "Red")
+                        self.custom_label.config(bg = "Red")
+                if PSI > (self.set_pressure_scale.get() - 3):
+                    if self.frame.cget('bg') == "Red":
+                        self.frame.config(bg=self.frameColor)
+                        self.set_pressure_scale.config(bg=self.frameColor)
+                        self.custom_label.config(bg=self.frameColor)
             except:
                 print("Init Air Pressure")
-            root.after(100, self.update_pressure)
+            root.after(200, self.update_pressure)
         else:
             self.pressure.set("")
 
@@ -451,15 +497,15 @@ class PneumaticControlFrame:
         frame8.grid(row=2, column=1)
         frame9.grid(row=2, column=2)
 
-        out1 = PneumaticFrame1(frame1, "Channel #1", colorArray[0], CH1_S, CH1_RP, CH1_RSP, CH1_ROP)
-        out2 = PneumaticFrame1(frame2, "Channel #2", colorArray[1], CH2_S, CH2_RP, CH2_RSP, CH2_ROP)
-        out3 = PneumaticFrame1(frame3, "Channel #3", colorArray[2], CH3_S, CH3_RP, CH3_RSP, CH3_ROP)
-        out4 = PneumaticFrame1(frame4, "Channel #4", colorArray[3], CH4_S, CH4_RP, CH4_RSP, CH4_ROP)
-        out5 = PneumaticFrame1(frame5, "Channel #5", colorArray[4], CH5_S, CH5_RP, CH5_RSP, CH5_ROP)
-        out6 = PneumaticFrame1(frame6, "Channel #6", colorArray[5], CH6_S, CH6_RP, CH6_RSP, CH6_ROP)
-        out7 = PneumaticFrame2(frame7, "Purge #1", 'DarkOliveGreen3', 0, PG1_RP, PG1_RSP, PG1_ROP)
-        out8 = PneumaticFrame2(frame8, "Purge #2", 'DarkOliveGreen2', 0, PG2_RP, PG2_RSP, PG2_ROP)
-        out9 = PneumaticFrame2(frame9, "Hydro", 'DarkOrange2', HYD_RP, HYD_S, HYD_RSP, HYD_ROP )
+        out1 = PneumaticFrame1(frame1, "Channel #1", "LEFT LEG", colorArray[0], CH1_S, CH1_RP, CH1_RSP, CH1_ROP, 95)
+        out2 = PneumaticFrame1(frame2, "Channel #2", "RIGHT LEG", colorArray[1], CH2_S, CH2_RP, CH2_RSP, CH2_ROP, 95)
+        out3 = PneumaticFrame1(frame3, "Channel #3", "MANTIS GRIP", colorArray[2], CH3_S, CH3_RP, CH3_RSP, CH3_ROP, 95)
+        out4 = PneumaticFrame1(frame4, "Channel #4", "VARD CLAMP", colorArray[3], CH4_S, CH4_RP, CH4_RSP, CH4_ROP, 60)
+        out5 = PneumaticFrame1(frame5, "Channel #5", "VARD GRIP", colorArray[4], CH5_S, CH5_RP, CH5_RSP, CH5_ROP, 95)
+        out6 = PneumaticFrame1(frame6, "Channel #6", "Channel #6", colorArray[5], CH6_S, CH6_RP, CH6_RSP, CH6_ROP, 0)
+        out7 = PneumaticFrame2(frame7, "Purge #1", "Standard Purge", 'DarkOliveGreen3', 0, PG1_RP, PG1_RSP, PG1_ROP, 25)
+        out8 = PneumaticFrame2(frame8, "Purge #2", "Wrist Purge", 'DarkOliveGreen2', 0, PG2_RP, PG2_RSP, PG2_ROP, 25)
+        out9 = PneumaticFrame2(frame9, "Hydro", "Hydro", 'DarkOrange2', HYD_RP, HYD_S, HYD_RSP, HYD_ROP, 95)
 
 
 

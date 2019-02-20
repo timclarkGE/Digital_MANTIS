@@ -25,12 +25,12 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
 #System B
-HUB1 = 539079
-HUB2 = 539520
+#HUB1 = 539079
+#HUB2 = 539520
 
 #System C
-#HUB1 = 539081
-#HUB2 = 538800
+HUB1 = 539081
+HUB2 = 538800
 
 class SetupMainWindow:
     def __init__(self):
@@ -91,7 +91,7 @@ class popupWindow(object):
         self.top.destroy()
 
 class AxisFrame:
-    def __init__(self, master, initial_name, move_pos_text, move_neg_text, serial_number, port, color):
+    def __init__(self, master, initial_name, move_pos_text, move_neg_text, serial_number, port, color, amp, vel):
         frame = Frame(master, borderwidth=2, relief=SUNKEN, bg=color)
         frame.pack()
         self.master = master
@@ -100,8 +100,8 @@ class AxisFrame:
         self.fontType = "Comic Sans"
 
         #Set the parameters for the axis
-        self.current_limit = 2          #2 to 25A
-        self.max_velocity = .5           #0 to 1
+        self.current_limit = amp          #2 to 25A
+        self.max_velocity = vel           #0 to 1
         self.acceleration = 1         #0.1 to 100
         self.invert = FALSE             #TRUE or FALSE
         self.axis_name = initial_name
@@ -208,13 +208,13 @@ class ControlFrame:
         camera_frame.grid(row=3,column=0, columnspan=7, sticky=W)
 
 
-        out1 = AxisFrame(frame1, "BASE CIRC", "CW", "CCW", HUB1, 5, colorArray[0])
-        out2 = AxisFrame(frame2, "BASE AUX", "OUT", "IN", HUB2, 0, colorArray[1])
-        out3 = AxisFrame(frame3, "VARD ROT", "POSITIVE", "NEGATIVE", HUB1, 3, colorArray[2])
-        out4 = AxisFrame(frame4, "VARD VERT", "POSITIVE", "NEGATIVE", HUB1, 4, colorArray[3])
-        out5 = AxisFrame(frame5, "DA MAST", "POSITIVE", "NEGATIVE", HUB1, 0, colorArray[4])
-        out6 = AxisFrame(frame6, "DA PAN", "RIGHT", "LEFT", HUB1, 2, colorArray[5])
-        out7 = AxisFrame(frame7, "DA TILT", "POSITIVE", "NEGATIVE", HUB1, 1, colorArray[6])
+        out1 = AxisFrame(frame1, "BASE CIRC", "VESSEL RIGHT", "VESSEL LEFT", HUB1, 5, colorArray[0], 3.3, 0.51)
+        out2 = AxisFrame(frame2, "BASE AUX", "CW/IN", "CCW/OUT", HUB2, 0, colorArray[1], 2.2, 0.52)
+        out3 = AxisFrame(frame3, "VARD ROT", "CW", "CCW", HUB1, 3, colorArray[2], 2.2, 0.53)
+        out4 = AxisFrame(frame4, "VARD VERT", "UP", "DOWN", HUB1, 4, colorArray[3], 7.8, 0.54) #TODO check this current
+        out5 = AxisFrame(frame5, "DA MAST", "UP", "DOWN", HUB1, 0, colorArray[4], 8, 0.55)
+        out6 = AxisFrame(frame6, "DA PAN", "CW", "CCW", HUB1, 2, colorArray[5], 3.0, 0.56)
+        out7 = AxisFrame(frame7, "DA TILT", "UP", "DOWN", HUB1, 1, colorArray[6], 3.6, 0.57)
 
         #RJ Camera Control Code
         self.invert_tilt = BooleanVar()
@@ -232,10 +232,11 @@ class ControlFrame:
         self.btn_tilt_down = Button(camera_frame, text="TILT DOWN", font="Courier, 12", width=10)
         self.btn_pan_right = Button(camera_frame, text="PAN RIGHT", font="Courier, 12", width=10)
         self.btn_pan_left = Button(camera_frame, text="PAN LEFT", font="Courier, 12", width=10)
-        self.tilt_speed = Scale(camera_frame, orient=HORIZONTAL, from_=0.01, to=.22, resolution=0.01)
-        self.pan_speed = Scale(camera_frame, orient=HORIZONTAL, from_=0.01, to=.22, resolution=0.01)
+        self.tilt_speed = Scale(camera_frame, orient=HORIZONTAL, from_=0.01, to=.5, resolution=0.01)
+        self.pan_speed = Scale(camera_frame, orient=HORIZONTAL, from_=0.01, to=.5, resolution=0.01)
         self.ckbx_invert_tilt = Checkbutton(camera_frame, text="Invert Tilt", variable=self.invert_tilt)
         self.ckbx_invert_pan = Checkbutton(camera_frame, text="Invert Pan", variable=self.invert_pan)
+        self.activeColor = 'SpringGreen4'
 
         self.btn_power.grid(row=0, column=0, padx=60)
         self.btn_ms.grid(row=1, column=0, padx=5, pady=5)
@@ -350,8 +351,10 @@ class ControlFrame:
     def toggle_power(self):
         if self.power.getState() == True:
             self.power.setState(False)
+            self.btn_power.config(bg="SystemButtonFace")
         elif self.power.getState() == False:
             self.power.setState(True)
+            self.btn_power.config(bg=self.activeColor)
 
     def update_left_intensity(self, val):
         self.left_light.setVoltage(float(val))
