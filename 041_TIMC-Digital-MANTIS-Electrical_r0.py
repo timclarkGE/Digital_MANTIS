@@ -29,14 +29,14 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
 #System A SN:040
-#SN = "040"
-#HUB1 = 539552
-#HUB2 = 539066
+SN = "040"
+HUB1 = 539552
+HUB2 = 539066
 
 #System B
-SN = "041"
-HUB1 = 539079
-HUB2 = 539520
+#SN = "041"
+#HUB1 = 539079
+#HUB2 = 539520
 
 #System C
 #SN = "042"
@@ -71,7 +71,7 @@ class popupWindow(object):
         self.invert.set(invert)
 
         #Create the scales
-        self.scale_current_limit = Scale(top, orient=HORIZONTAL, from_=2, to=25, resolution=.1,
+        self.scale_current_limit = Scale(top, orient=HORIZONTAL, from_=2, to=current_limit*1.5, resolution=.1,
                            label="Current Limit (A)", length=200)
         self.scale_max_velocity = Scale(top, orient=HORIZONTAL, from_=0.01, to=1, resolution=.01,
                            label="Max Velocity (%)", length=200)
@@ -218,12 +218,12 @@ class ControlFrame:
         frame7.grid(row=1, column=6)
         camera_frame.grid(row=3,column=0, columnspan=7, sticky=W)
 
-        out1 = AxisFrame(frame1, "BASE CIRC", "VESSEL RIGHT", "VESSEL LEFT", HUB1, 5, colorArray[0], 3.3, 0.51)
-        out2 = AxisFrame(frame2, "BASE AUX", "CW/IN", "CCW/OUT", HUB2, 0, colorArray[1], 2.2, 0.52)
-        out3 = AxisFrame(frame3, "VARD ROT", "CW", "CCW", HUB1, 3, colorArray[2], 2.2, 0.53)
+        out1 = AxisFrame(frame1, "BASE CIRC", "VESSEL RIGHT", "VESSEL LEFT", HUB1, 5, colorArray[0], 3.3, 0.55)
+        out2 = AxisFrame(frame2, "BASE AUX", "CW/IN", "CCW/OUT", HUB2, 0, colorArray[1], 2.2, 0.11)
+        out3 = AxisFrame(frame3, "VARD ROT", "CW", "CCW", HUB1, 3, colorArray[2], 2.2, 0.15)
         out4 = AxisFrame(frame4, "VARD VERT", "UP", "DOWN", HUB1, 4, colorArray[3], 7.8, 0.54)
-        out5 = AxisFrame(frame5, "DA MAST", "UP", "DOWN", HUB1, 0, colorArray[4], 8, 0.55)
-        out6 = AxisFrame(frame6, "DA PAN", "CW", "CCW", HUB1, 2, colorArray[5], 3.0, 0.56)
+        out5 = AxisFrame(frame5, "DA MAST", "UP", "DOWN", HUB1, 0, colorArray[4], 8, 0.86)
+        out6 = AxisFrame(frame6, "DA PAN", "CW", "CCW", HUB1, 2, colorArray[5], 3.0, 0.30)
         out7 = AxisFrame(frame7, "DA TILT", "UP", "DOWN", HUB1, 1, colorArray[6], 3.6, 0.57)
 
         #RJ Camera Control Code
