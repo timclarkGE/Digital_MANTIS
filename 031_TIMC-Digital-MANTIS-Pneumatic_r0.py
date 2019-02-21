@@ -542,7 +542,7 @@ class PneumaticControlFrame:
         out1 = PneumaticFrame1(frame1, "Channel #1", "LEFT LEG", colorArray[0], CH1_S, CH1_RP, CH1_RSP, CH1_ROP, 95)
         out2 = PneumaticFrame1(frame2, "Channel #2", "RIGHT LEG", colorArray[1], CH2_S, CH2_RP, CH2_RSP, CH2_ROP, 95)
         out3 = PneumaticFrame1(frame3, "Channel #3", "MANTIS GRIP", colorArray[2], CH3_S, CH3_RP, CH3_RSP, CH3_ROP, 95)
-        out4 = PneumaticFrame1(frame4, "Channel #4", "VARD CLAMP", colorArray[3], CH4_S, CH4_RP, CH4_RSP, CH4_ROP, 60)
+        out4 = PneumaticFrame1(frame4, "Channel #4", "VARD", colorArray[3], CH4_S, CH4_RP, CH4_RSP, CH4_ROP, 60)
         out5 = PneumaticFrame1(frame5, "Channel #5", "VARD GRIP", colorArray[4], CH5_S, CH5_RP, CH5_RSP, CH5_ROP, 95)
         out6 = PneumaticFrame1(frame6, "Channel #6", "Channel #6", colorArray[5], CH6_S, CH6_RP, CH6_RSP, CH6_ROP, 0)
         out7 = PneumaticFrame2(frame7, "Purge #1", "Standard Purge", 'DarkOliveGreen3', 0, PG1_RP, PG1_RSP, PG1_ROP, 25)
