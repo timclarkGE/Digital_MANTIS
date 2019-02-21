@@ -33,11 +33,11 @@ MAXPR = 130.5 #Default maximum pressure of the ITV1050-21N2BL4 Pressure regulato
 MINPR = 0.0
 
 #System A
-#SN = "030"
-#HUB1 = 538774
-#HUB2 = 538780
-#SBCH = 512907
-#INTER = 527456  #interface kit 8/8/8
+SN = "030"
+HUB1 = 538774
+HUB2 = 538780
+SBCH = 512907
+INTER = 527456  #interface kit 8/8/8
 
 #Serial Numbers for Devices
 #System B
@@ -48,11 +48,11 @@ MINPR = 0.0
 #INTER = 527455  #interface kit 8/8/8
 
 #System C
-SN = "032"
-HUB1 = 539540
-HUB2 = 539115
-SBCH = 512844
-INTER = 527447  #interface kit 8/8/8
+#SN = "032"
+#HUB1 = 539540
+#HUB2 = 539115
+#SBCH = 512844
+#INTER = 527447  #interface kit 8/8/8
 
 #Solenoids
 CH1_S = [HUB2, 0, 1]
@@ -100,7 +100,7 @@ Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 class SetupMainWindow:
     def __init__(self):
         self.gui_width = 450
-        self.gui_height = 685
+        self.gui_height = 695
 
 class MainWindow:
     def __init__(self, master, parameters):
@@ -142,6 +142,7 @@ class PneumaticFrame1:
         self.frameColor = color
 
         self.pressure = IntVar()
+        self.lock_flag = IntVar()
         self.pressure.set("")
 
         self.power = Button(self.frame, text="PWR", activebackground=self.activeColor, command=lambda: self.toggle_pwr())
@@ -152,8 +153,9 @@ class PneumaticFrame1:
         self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
         self.custom_label = Label(self.frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(self.frame, text=initial_name, bg=color)
+        self.lock = Checkbutton(self.frame, text="LOCK", bg=color, variable = self.lock_flag, command= self.lock)
 
-        #Init the pressure scale to the default value.
+        #Init the pressure scale to the default value
         self.set_pressure_scale.set(PSI)
         self.frame_name.set(top_name)
 
@@ -167,7 +169,8 @@ class PneumaticFrame1:
         self.frame.rowconfigure(4, minsize=50)
         self.extend.grid(column=0, row=4)
         self.retract.grid(column=1, row=4)
-        self.label.grid(column=0, row=5, columnspan=2)
+        self.label.grid(column=0, row=5)
+        self.lock.grid(column=1, row=5)
 
         # Connect to Phidget Solid State Relay for solinoid control
         self.solenoid_switch = DigitalOutput()
@@ -306,7 +309,17 @@ class PneumaticFrame1:
             root.after(200, self.update_pressure)
         else:
             self.pressure.set("")
-
+    def lock(self):
+        if self.lock_flag.get() == True:
+            self.extend.config(state="disabled")
+            self.retract.config(state="disabled")
+            self.set_pressure_scale.config(state="disabled")
+            self.power.config(state="disable")
+        elif self.lock_flag.get() == False:
+            self.extend.config(state="normal")
+            self.retract.config(state="normal")
+            self.set_pressure_scale.config(state="normal")
+            self.power.config(state="normal")
 class PneumaticFrame2:
     def __init__(self, master, initial_name, top_name, color, sol, reg_pwr, reg_set, reg_get, PSI):
         self.frame = Frame(master, borderwidth=2, relief=SUNKEN, bg=color)
@@ -320,7 +333,8 @@ class PneumaticFrame2:
         self.frameColor = color
 
         self.pressure = IntVar()
-        self.pressure.set(top_name)
+        self.lock_flag = IntVar()
+        self.pressure.set("")
 
         self.power = Button(self.frame, text="PWR", activebackground=self.activeColor, command=lambda: self.toggle_pwr())
         self.set_label = Button(self.frame, text="SET LABEL", font=(self.fontType,7), command=lambda: self.get_label_input())
@@ -328,11 +342,16 @@ class PneumaticFrame2:
         self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
         self.custom_label = Label(self.frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(self.frame, text=initial_name, bg=color)
-
+        self.lock = Checkbutton(self.frame, text="LOCK", bg=color, variable=self.lock_flag, command=self.lock)
         self.frame_name.set(top_name)
 
         # Init the pressure scale to the default value.
         self.set_pressure_scale.set(PSI)
+        # Lock hydo at startup
+        if initial_name == "Hydro":
+            self.lock.select()
+            self.set_pressure_scale.config(state="disabled")
+            self.power.config(state="disable")
 
         self.frame.rowconfigure(0, minsize=30)
         self.custom_label.grid(row=0, column=0, columnspan=2, sticky=S)
@@ -342,7 +361,8 @@ class PneumaticFrame2:
         self.observed_pressure.grid(column=1, row=2)
         self.set_pressure_scale.grid(column=0, row=3, columnspan=2, padx=20)
         self.frame.rowconfigure(4, minsize=5)
-        self.label.grid(column=0, row=5, columnspan=2)
+        self.label.grid(column=0, row=5)
+        self.lock.grid(column=1, row=5)
 
         # Connect to Phidget Solid State Relay for solinoid control
         if self.frame_name.get() == "Hydro":
@@ -399,18 +419,23 @@ class PneumaticFrame2:
         #Turn off air channel
         elif self.state == 1:
             remember_state = self.set_pressure_scale.get()
-            messagebox.showinfo(self.frame_name.get() + " Warning",
-                                "Pressure will be set to zero. Acknowledge that " + self.frame_name.get() + " is in a safe configuration")
+            if self.frame_name.get() != "Hydro":
+                messagebox.showinfo(self.frame_name.get() + " Warning",
+                                    "Pressure will be set to zero. Acknowledge that " + self.frame_name.get() + " is in a safe configuration")
+
             # Change pressure to zero
             self.set_pressure_scale.set(0)
             self.set_pressure(0)
             time.sleep(0.5)
             self.frame.update()
             self.reg_switch.setState(False)
-            if self.frame_name.get() == "Hydro":
-                self.solenoid_switch.setState(False)
             time.sleep(0.5)
             self.set_pressure_scale.set(remember_state)
+            if self.frame_name.get() == "Hydro":
+                self.solenoid_switch.setState(False)
+                self.lock.select()
+                self.set_pressure_scale.config(state="disabled")
+                self.power.config(state="disable")
 
             #Turn off power to reguluator and remove active button color
             self.power.config(bg="SystemButtonFace")
@@ -466,6 +491,14 @@ class PneumaticFrame2:
             root.after(200, self.update_pressure)
         else:
             self.pressure.set("")
+
+    def lock(self):
+        if self.lock_flag.get() == True:
+            self.set_pressure_scale.config(state="disabled")
+            self.power.config(state="disable")
+        elif self.lock_flag.get() == False:
+            self.set_pressure_scale.config(state="normal")
+            self.power.config(state="normal")
 
 class PneumaticControlFrame:
     def __init__(self, master, colorArray):

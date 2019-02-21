@@ -28,8 +28,7 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 #Line required to look for Phidget devices on the network
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
-
-#System A
+#System A SN:040
 SN = "040"
 HUB1 = 539552
 HUB2 = 539066
@@ -47,7 +46,7 @@ HUB2 = 539066
 class SetupMainWindow:
     def __init__(self):
         self.gui_width = 1050
-        self.gui_height = 555
+        self.gui_height = 440
 
 class MainWindow:
     def __init__(self, master, parameters):
