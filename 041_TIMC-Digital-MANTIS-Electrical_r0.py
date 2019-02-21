@@ -29,14 +29,14 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
 #System A SN:040
-SN = "040"
-HUB1 = 539552
-HUB2 = 539066
+#SN = "040"
+#HUB1 = 539552
+#HUB2 = 539066
 
 #System B
-#SN = "041"
-#HUB1 = 539079
-#HUB2 = 539520
+SN = "041"
+HUB1 = 539079
+HUB2 = 539520
 
 #System C
 #SN = "042"

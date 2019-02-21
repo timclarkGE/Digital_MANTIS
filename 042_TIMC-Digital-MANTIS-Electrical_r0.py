@@ -29,9 +29,9 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
 #System A SN:040
-SN = "040"
-HUB1 = 539552
-HUB2 = 539066
+#SN = "040"
+#HUB1 = 539552
+#HUB2 = 539066
 
 #System B
 #SN = "041"
@@ -39,9 +39,9 @@ HUB2 = 539066
 #HUB2 = 539520
 
 #System C
-#SN = "042"
-#HUB1 = 539081
-#HUB2 = 538800
+SN = "042"
+HUB1 = 539081
+HUB2 = 538800
 
 class SetupMainWindow:
     def __init__(self):

@@ -33,19 +33,19 @@ MAXPR = 130.5 #Default maximum pressure of the ITV1050-21N2BL4 Pressure regulato
 MINPR = 0.0
 
 #System A
-SN = "030"
-HUB1 = 538774
-HUB2 = 538780
-SBCH = 512907
-INTER = 527456  #interface kit 8/8/8
+#SN = "030"
+#HUB1 = 538774
+#HUB2 = 538780
+#SBCH = 512907
+#INTER = 527456  #interface kit 8/8/8
 
 #Serial Numbers for Devices
 #System B
-#SN = "031"
-#HUB1 = 539685
-#HUB2 = 538463
-#SBCH = 512770
-#INTER = 527455  #interface kit 8/8/8
+SN = "031"
+HUB1 = 539685
+HUB2 = 538463
+SBCH = 512770
+INTER = 527455  #interface kit 8/8/8
 
 #System C
 #SN = "032"
@@ -294,15 +294,21 @@ class PneumaticFrame1:
                         self.frame.config(bg=self.frameColor)
                         self.set_pressure_scale.config(bg=self.frameColor)
                         self.custom_label.config(bg=self.frameColor)
+                        self.label.config(bg=self.frameColor)
+                        self.lock.config(bg=self.frameColor)
                     else:
                         self.frame.config(bg='Red')
                         self.set_pressure_scale.config(bg="Red")
                         self.custom_label.config(bg="Red")
+                        self.label.config(bg="Red")
+                        self.lock.config(bg="Red")
                 if PSI > (self.set_pressure_scale.get() - 3):
                     if self.frame.cget('bg') == "Red":
                         self.frame.config(bg=self.frameColor)
                         self.set_pressure_scale.config(bg=self.frameColor)
                         self.custom_label.config(bg=self.frameColor)
+                        self.label.config(bg=self.frameColor)
+                        self.lock.config(bg=self.frameColor)
 
             except:
                 print("Init Air Pressure")
@@ -339,7 +345,12 @@ class PneumaticFrame2:
         self.power = Button(self.frame, text="PWR", activebackground=self.activeColor, command=lambda: self.toggle_pwr())
         self.set_label = Button(self.frame, text="SET LABEL", font=(self.fontType,7), command=lambda: self.get_label_input())
         self.observed_pressure = Entry(self.frame, width=5, state="readonly", textvariable = self.pressure)
-        self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color, label="Set Pressure (PSI)", highlightthickness=0, command= self.set_pressure)
+        if self.frame_name.get() == "Hydro":
+            self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=92, resolution=0.5, bg=color,
+                                            label="Set Pressure (PSI)", highlightthickness=0, command=self.set_pressure)
+        else:
+            self.set_pressure_scale = Scale(self.frame, orient=HORIZONTAL, from_=0, to=50, resolution=0.5, bg=color,
+                                            label="Set Pressure (PSI)", highlightthickness=0, command=self.set_pressure)
         self.custom_label = Label(self.frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(self.frame, text=initial_name, bg=color)
         self.lock = Checkbutton(self.frame, text="LOCK", bg=color, variable=self.lock_flag, command=self.lock)
@@ -477,15 +488,21 @@ class PneumaticFrame2:
                         self.frame.config(bg=self.frameColor)
                         self.set_pressure_scale.config(bg=self.frameColor)
                         self.custom_label.config(bg=self.frameColor)
+                        self.label.config(bg=self.frameColor)
+                        self.lock.config(bg=self.frameColor)
                     else:
                         self.frame.config(bg = 'Red')
                         self.set_pressure_scale.config(bg = "Red")
                         self.custom_label.config(bg = "Red")
+                        self.label.config(bg="Red")
+                        self.lock.config(bg="Red")
                 if PSI > (self.set_pressure_scale.get() - 3):
                     if self.frame.cget('bg') == "Red":
                         self.frame.config(bg=self.frameColor)
                         self.set_pressure_scale.config(bg=self.frameColor)
                         self.custom_label.config(bg=self.frameColor)
+                        self.label.config(bg=self.frameColor)
+                        self.lock.config(bg=self.frameColor)
             except:
                 print("Init Air Pressure")
             root.after(200, self.update_pressure)
