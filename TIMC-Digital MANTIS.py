@@ -24,13 +24,17 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 #Line required to look for Phidget devices on the network
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
+#System A SN:040
+HUB1 = 539552
+HUB2 = 539066
+
 #System B
 #HUB1 = 539079
 #HUB2 = 539520
 
 #System C
-HUB1 = 539081
-HUB2 = 538800
+#HUB1 = 539081
+#HUB2 = 538800
 
 class SetupMainWindow:
     def __init__(self):
@@ -207,7 +211,6 @@ class ControlFrame:
         frame7.grid(row=1, column=6)
         camera_frame.grid(row=3,column=0, columnspan=7, sticky=W)
 
-
         out1 = AxisFrame(frame1, "BASE CIRC", "VESSEL RIGHT", "VESSEL LEFT", HUB1, 5, colorArray[0], 3.3, 0.51)
         out2 = AxisFrame(frame2, "BASE AUX", "CW/IN", "CCW/OUT", HUB2, 0, colorArray[1], 2.2, 0.52)
         out3 = AxisFrame(frame3, "VARD ROT", "CW", "CCW", HUB1, 3, colorArray[2], 2.2, 0.53)
@@ -339,9 +342,9 @@ class ControlFrame:
         self.btn_ms.bind('<ButtonPress-1>', lambda event: self.focus_type("ON"))
         self.btn_ms.bind('<ButtonRelease-1>', lambda event: self.focus_type("OFF"))
 
-        self.btn_tilt_up.bind('<ButtonPress-1>', lambda event: self.tilt_move("+"))
+        self.btn_tilt_up.bind('<ButtonPress-1>', lambda event: self.tilt_move("-"))
         self.btn_tilt_up.bind('<ButtonRelease-1>', lambda event: self.tilt_move("0"))
-        self.btn_tilt_down.bind('<ButtonPress-1>', lambda event: self.tilt_move("-"))
+        self.btn_tilt_down.bind('<ButtonPress-1>', lambda event: self.tilt_move("+"))
         self.btn_tilt_down.bind('<ButtonRelease-1>', lambda event: self.tilt_move("0"))
         self.btn_pan_right.bind('<ButtonPress-1>', lambda event: self.pan_move("R"))
         self.btn_pan_right.bind('<ButtonRelease-1>', lambda event: self.pan_move("0"))
