@@ -43,6 +43,9 @@ HUB2 = 539520
 #HUB1 = 539081
 #HUB2 = 538800
 
+#Current Multiplier
+MULT = 1
+
 class SetupMainWindow:
     def __init__(self):
         self.gui_width = 1050
@@ -71,7 +74,7 @@ class popupWindow(object):
         self.invert.set(invert)
 
         #Create the scales
-        self.scale_current_limit = Scale(top, orient=HORIZONTAL, from_=2, to=current_limit*1.5, resolution=.1,
+        self.scale_current_limit = Scale(top, orient=HORIZONTAL, from_=2, to=current_limit*MULT, resolution=.1,
                            label="Current Limit (A)", length=200)
         self.scale_max_velocity = Scale(top, orient=HORIZONTAL, from_=0.01, to=1, resolution=.01,
                            label="Max Velocity (%)", length=200)
@@ -128,6 +131,7 @@ class AxisFrame:
         self.custom_label = Label(frame, textvariable=self.frame_name, font=(self.fontType, 14), bg=color)
         self.label = Label(frame, text=initial_name, bg=color)
 
+        self.speed.set(0.25)
         frame.rowconfigure(0, minsize=30)
         self.custom_label.grid(row=0, column=0, columnspan=2, sticky=S)
         self.jog_pos_btn.grid(column=0, row=1, pady=10)
@@ -248,23 +252,26 @@ class ControlFrame:
         self.ckbx_invert_pan = Checkbutton(camera_frame, text="Invert Pan", variable=self.invert_pan)
         self.activeColor = 'SpringGreen4'
 
+        self.tilt_speed.set(0.15)
+        self.pan_speed.set(0.15)
+
         self.btn_power.grid(row=0, column=0, padx=60)
         self.btn_ms.grid(row=1, column=0, padx=5, pady=5)
-        self.btn_near.grid(row=0, column=2, padx=10, pady=10)
-        self.btn_far.grid(row=1, column=2, padx=10, pady=10)
-        self.btn_tele.grid(row=0, column=3, padx=10, pady=10)
-        self.btn_wide.grid(row=1, column=3, padx=10, pady=10)
+        self.btn_near.grid(row=0, column=2, padx=20, pady=10)
+        self.btn_far.grid(row=1, column=2, padx=20, pady=10)
+        self.btn_tele.grid(row=0, column=3, padx=20, pady=10)
+        self.btn_wide.grid(row=1, column=3, padx=20, pady=10)
         self.left_light_scale.grid(row=0, column=4, rowspan=3, padx=20, pady=5)
-        self.right_light_scale.grid(row=0, column=5, rowspan=3, padx=20, pady=5)
-        self.label_lights.grid(row=3, column=4, columnspan=2, sticky=N)
+        self.right_light_scale.grid(row=0, column=5, rowspan=3, padx=45, pady=5)
+        self.label_lights.grid(row=3, column=4, columnspan=2, padx=45, sticky=N)
         self.btn_tilt_up.grid(row=0, column=6, padx=20, pady=5)
         self.btn_tilt_down.grid(row=1, column=6, padx=20, pady=5)
-        self.btn_pan_right.grid(row=0, column=7, padx=20, pady=5)
-        self.btn_pan_left.grid(row=1, column=7, padx=20, pady=5)
+        self.btn_pan_right.grid(row=0, column=8, padx=20, pady=5, rowspan=2)
+        self.btn_pan_left.grid(row=0, column=7, padx=20, pady=5, rowspan=2)
         self.tilt_speed.grid(row=2, column=6)
-        self.pan_speed.grid(row=2, column=7)
+        self.pan_speed.grid(row=2, column=7, columnspan=2)
         self.ckbx_invert_tilt.grid(row=3,column=6)
-        self.ckbx_invert_pan.grid(row=3, column=7)
+        self.ckbx_invert_pan.grid(row=3, column=7, columnspan=2)
 
         #Connect to Phidget Devices
         self.power = DigitalOutput()
