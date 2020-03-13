@@ -11,9 +11,10 @@
 # multiple motor axes. This also runs the RJ Camera system. There are
 # six bulkhead connectors: camera, PTL, MANTIS Base, VARD, Mast, Wrist
 #
-# Update: The code was modified to add keyboard binding so a user could use the keyboard instead of a mouse
-#         Additionally, a Logitech F310 Gamepad can be connected to the Digital MANTIS Laptop and using 3rd party
-#         Logitech software, one can map gamepad buttons to ascii characters allowing for control via the gamepad
+# Revision 1 Update:
+#   The code was modified to add keyboard binding so a user could use the keyboard instead of a mouse
+#   Additionally, a Logitech F310 Gamepad can be connected to the Digital MANTIS Laptop and using 3rd party
+#   Logitech software, one can map gamepad buttons to ascii characters allowing for control via the gamepad
 #
 
 from tkinter import *
@@ -39,14 +40,14 @@ Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 #HUB2 = 539066
 
 #System B
-#SN = "041"
-#HUB1 = 539079
-#HUB2 = 539520
+SN = "041"
+HUB1 = 539079
+HUB2 = 539520
 
 #System C
-SN = "042"
-HUB1 = 539081
-HUB2 = 538800
+#SN = "042"
+#HUB1 = 539081
+#HUB2 = 538800
 
 #Current Multiplier
 MULT = 1
@@ -61,7 +62,7 @@ class MainWindow:
         self.parameters = parameters
         self.master = master
         self.master.geometry(str(parameters.gui_width) + "x" + str(parameters.gui_height))
-        self.master.title("R0 - TIMC Digital MANTIS Electrical - S/N: "+ SN)
+        self.master.title("R1 - TIMC Digital MANTIS Electrical - S/N: "+ SN)
 
         #Create Frame for Pnematics Control
         self.out0 = ControlFrame(master, blue_checkers)
@@ -119,7 +120,6 @@ class MainWindow:
         master.bind('<KeyRelease-l>', lambda event: self.out0.out6.jog("0"))
         master.bind('<KeyPress-j>', lambda event: self.out0.out6.jog("-"))
         master.bind('<KeyRelease-j>', lambda event: self.out0.out6.jog("0"))
-
 
 class popupWindow(object):
     def __init__(self, master, current_limit, max_velocity, acceleration, invert):
@@ -487,5 +487,3 @@ class ControlFrame:
 root = Tk()
 TIMC = MainWindow(root, SetupMainWindow())
 root.mainloop()
-
-

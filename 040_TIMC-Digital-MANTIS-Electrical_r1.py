@@ -11,9 +11,10 @@
 # multiple motor axes. This also runs the RJ Camera system. There are
 # six bulkhead connectors: camera, PTL, MANTIS Base, VARD, Mast, Wrist
 #
-# Update: The code was modified to add keyboard binding so a user could use the keyboard instead of a mouse
-#         Additionally, a Logitech F310 Gamepad can be connected to the Digital MANTIS Laptop and using 3rd party
-#         Logitech software, one can map gamepad buttons to ascii characters allowing for control via the gamepad
+# Revision 1 Update:
+#   The code was modified to add keyboard binding so a user could use the keyboard instead of a mouse
+#   Additionally, a Logitech F310 Gamepad can be connected to the Digital MANTIS Laptop and using 3rd party
+#   Logitech software, one can map gamepad buttons to ascii characters allowing for control via the gamepad
 #
 
 from tkinter import *
@@ -34,9 +35,9 @@ orange_checkers = ['DarkOrange2', 'DarkOrange4','DarkOrange2', 'DarkOrange4','Da
 Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 
 #System A SN:040
-#SN = "040"
-#HUB1 = 539552
-#HUB2 = 539066
+SN = "040"
+HUB1 = 539552
+HUB2 = 539066
 
 #System B
 #SN = "041"
@@ -44,9 +45,9 @@ Net.enableServerDiscovery(PhidgetServerType.PHIDGETSERVER_DEVICEREMOTE)
 #HUB2 = 539520
 
 #System C
-SN = "042"
-HUB1 = 539081
-HUB2 = 538800
+#SN = "042"
+#HUB1 = 539081
+#HUB2 = 538800
 
 #Current Multiplier
 MULT = 1
@@ -61,12 +62,12 @@ class MainWindow:
         self.parameters = parameters
         self.master = master
         self.master.geometry(str(parameters.gui_width) + "x" + str(parameters.gui_height))
-        self.master.title("R0 - TIMC Digital MANTIS Electrical - S/N: "+ SN)
+        self.master.title("R1 - TIMC Digital MANTIS Electrical - S/N: "+ SN)
 
         #Create Frame for Pnematics Control
         self.out0 = ControlFrame(master, blue_checkers)
 
-        #Base Key Tool Movements
+        # Base Key Tool Movements
         master.bind('<KeyPress-w>', lambda event: self.out0.out2.jog("+"))
         master.bind('<KeyRelease-w>', lambda event: self.out0.out2.jog("0"))
         master.bind('<KeyPress-s>', lambda event: self.out0.out2.jog("-"))
@@ -76,7 +77,7 @@ class MainWindow:
         master.bind('<KeyPress-a>', lambda event: self.out0.out1.jog("-"))
         master.bind('<KeyRelease-a>', lambda event: self.out0.out1.jog("0"))
 
-        #Vard Key Tool Movements
+        # Vard Key Tool Movements
         master.bind('<KeyPress-5>', lambda event: self.out0.out4.jog("+"))
         master.bind('<KeyRelease-5>', lambda event: self.out0.out4.jog("0"))
         master.bind('<KeyPress-2>', lambda event: self.out0.out4.jog("-"))
@@ -86,7 +87,7 @@ class MainWindow:
         master.bind('<KeyPress-1>', lambda event: self.out0.out3.jog("-"))
         master.bind('<KeyRelease-1>', lambda event: self.out0.out3.jog("0"))
 
-        #Camera Movement
+        # Camera Movement
         master.bind('<KeyPress-Left>', lambda event: self.out0.pan_move("L"))
         master.bind('<KeyRelease-Left>', lambda event: self.out0.pan_move("0"))
         master.bind('<KeyPress-Right>', lambda event: self.out0.pan_move("R"))
@@ -106,7 +107,7 @@ class MainWindow:
         master.bind('<KeyPress-Delete>', lambda event: self.out0.focus("-"))
         master.bind('<KeyRelease-Delete>', lambda event: self.out0.focus("0"))
 
-        #Mast Movements
+        # Mast Movements
         master.bind('<KeyPress-Prior>', lambda event: self.out0.out5.jog("+"))
         master.bind('<KeyRelease-Prior>', lambda event: self.out0.out5.jog("0"))
         master.bind('<KeyPress-Next>', lambda event: self.out0.out5.jog("-"))
@@ -119,7 +120,6 @@ class MainWindow:
         master.bind('<KeyRelease-l>', lambda event: self.out0.out6.jog("0"))
         master.bind('<KeyPress-j>', lambda event: self.out0.out6.jog("-"))
         master.bind('<KeyRelease-j>', lambda event: self.out0.out6.jog("0"))
-
 
 class popupWindow(object):
     def __init__(self, master, current_limit, max_velocity, acceleration, invert):
@@ -487,5 +487,3 @@ class ControlFrame:
 root = Tk()
 TIMC = MainWindow(root, SetupMainWindow())
 root.mainloop()
-
-
