@@ -3,8 +3,8 @@
 #
 # Author: Timothy Clark
 # Email: timothy.clark@ge.com
-# Date: 07/27/2021
-# Code Revision: 2
+# Date: 03/07/2023
+# Code Revision: 3
 #
 # Description:
 #   This code runs the Digital MANTIS system which is composed of
@@ -20,6 +20,11 @@
 #   Added another RJ overview camera.
 #   Added exception for running the GUI offline.
 #   Changed key binding definitions such that either camera may be operated via the gamepad.
+#
+# Revision 3 Update:
+#   Adapted how often the axis current is updated and created a running 1 second average to display
+#   Fixed bug where all motors were initialized with only 2A limit.
+#   Created overcurrent check which disables the axis if 50% of the maximum current is achieved for 3+ seconds
 
 
 from tkinter import *
